@@ -36,7 +36,7 @@ with a EuroEval (Danish + English) check that the edit does not cost benchmark p
 | **q3** (drift) | 1.57M H-module MLP weights | 0.880 / 0.940 | 65.58 | 96.08 | 51.76 (−0.60) |
 | **acc_en_a05** (acceptability) | 1,536 output-head weights | – | **66.43** | 97.67 | not run |
 | **both**, acceptability direction fitted on the *base* model | 1.58M weights, 0.088% | **0.940** / 0.960 | 64.70 | 96.08 | 51.71 (−0.65) |
-| **both**, acceptability direction **refitted** on the drift-edited model | 1.58M weights, 0.088% | – | **66.78** | 96.08 | see §10 |
+| **both**, acceptability direction **refitted** on the drift-edited model | 1.58M weights, 0.088% | – | **66.78** | 96.08 | see §9 |
 
 The short version: the drift edit moves a behaviour and does not pay for itself; the acceptability edit is a
 genuine +1.5–1.9 MCC for a thousandth of a percent of the weights; `dala` cannot be improved by either; and the
@@ -293,7 +293,7 @@ Consequence for §6: that arm was re-measured after the fix (`scripts/rerun_q3_e
 gains on zebra puzzles and NER. The drift-vs-accuracy conclusions of §5 are unaffected: they never involve a
 saved checkpoint.
 
-## 10. Both edits at once, and why the order of measurement matters
+## 9. Both edits at once, and why the order of measurement matters
 
 `specs/combined_q3_acc.json` applies the drift edit (16 tensor edits, 1.57M weights) and the acceptability edit
 (2 head rows, 1,536 weights) together — 1,575,936 weights, 0.0882% of the model. Run on everything:
@@ -319,7 +319,7 @@ drift edit's dala cost remains.
 The general lesson is the one the literature on steering keeps repeating: a direction is a property of *a*
 representation, not of the model. Read it, edit, then read it again.
 
-## 9. What would have to be true for a positive result here
+## 10. What would have to be true for a positive result here
 
 The blog's positive Qwen result needed three things at once: a failure mode that *stops the model producing an
 answer it can already compute*, a component whose removal is specific (random control flat), and enough of those
