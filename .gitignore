@@ -1,7 +1,7 @@
 .venv/
+.venv-eval/
 .euroeval_cache/
 checkpoints/
-results/*.jsonl
-results/*.npz
 logs/
 __pycache__/
+*.pyc

@@ -28,8 +28,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from eval_gsm import build_prompt, load_questions  # noqa: E402
 from multilingual_gsm_symbolic import load_instruction  # noqa: E402
 
-EN_COUNTS = Path.home() / "githubs/mimirs-geometry-of-ignorance/results/unigram_pile.npy"
-DA_COUNTS = Path.home() / "githubs/mimirs-geometry-of-ignorance/results/unigram_dynaword.npy"
+EN_COUNTS = Path(__file__).parent.parent / "results/unigram_pile.npy"
+DA_COUNTS = Path(__file__).parent.parent / "results/unigram_dynaword.npy"
 
 
 def token_labels(tok) -> torch.Tensor:

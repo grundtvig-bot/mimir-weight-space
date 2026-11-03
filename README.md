@@ -28,6 +28,32 @@ with a EuroEval (Danish + English) check that the edit does not cost benchmark p
 5. **This is the blog's own negative control, not a contradiction of it.** The authors' Gemma-3-270M arm made the
    same point: edits can remove an obstacle that hides an ability, they cannot add an ability the model lacks.
 
+## Results at a glance
+
+| arm | what it edits | GSM-Symbolic, held out (dan / eng) | scala-en | dala | EuroEval da+en (25 m.) |
+|---|---|---:|---:|---:|---:|
+| **base** | – | 0.900 / 0.960 | 64.90 | 97.67 | 52.36 |
+| **q3** (drift) | 1.57M H-module MLP weights | 0.880 / 0.940 | 65.58 | 96.08 | 51.76 (−0.60) |
+| **acc_en_a05** (acceptability) | 1,536 output-head weights | – | **66.43** | 97.67 | not run |
+| **combined** (both) | 1.58M weights, 0.088% | PENDING | PENDING | PENDING | PENDING |
+
+The short version: the drift edit (§3–§6) moves a behaviour and does not pay for itself; the acceptability edit (§7)
+is a genuine +1.5 MCC for a thousandth of a percent of the weights; and `dala` cannot be improved by either.
+
+## What's in here
+
+| path | what |
+|---|---|
+| `src/langdir.py` | locate the "answer is switching to English" direction and rank the MLP columns that write it |
+| `src/make_edit.py`, `src/weights.py`, `src/save_edit.py` | edit specs, the tensor operations, and checkpoint saving |
+| `src/eval_gsm.py`, `src/diagnose.py`, `src/summary.py` | GSM-Symbolic harness, failure taxonomy, paired statistics |
+| `src/probe_decision.py`, `src/prefill_test.py` | one-forward-pass screens (English share of the answer onset; forced-Danish prefills) |
+| `src/accept.py`, `src/accept_probe.py`, `src/bias_sweep.py` | acceptability harness, label-position probe, offline alpha sweep |
+| `src/patch_accept/sitecustomize.py` | the same edit injected into vLLM's `compute_logits`, for sweeps without saving checkpoints |
+| `specs/*.json` | every edit, as a declarative list of (parameter, columns, direction, alpha) |
+| `results/` | raw generations, per-token state arrays, EuroEval result records, per-arm summaries |
+| `docs/decisions.md` | the dead ends: sign errors, dose saturation, why the drift arm failed |
+
 ## What was reproduced, precisely
 
 | blog element | here |
@@ -279,7 +305,8 @@ one-forward-pass probe (probability of opening the required call syntax at the a
 ## Reproduce
 
 ```bash
-uv sync
+uv sync                       # torch 2.13 + transformers 5.19; EuroEval and vLLM go in a second env:
+uv venv .venv-eval --python 3.12 && uv pip install --python .venv-eval euroeval vllm
 python src/eval_gsm.py --langs dan eng --variant 0 --device cuda:0 --dtype fp16 --out results/base_dev
 python src/diagnose.py results/base_dev                     # failure taxonomy
 python src/langdir.py --lang dan --device cuda:0 --out results/langdir   # locate u and rank columns
@@ -290,6 +317,7 @@ bash scripts/screen.sh 0 40 specs/q3.json                    # 40-problem genera
 bash scripts/final.sh 0 specs/q3.json dan 1                  # held-out arm
 python src/prefill_test.py --lang dan --variant 0 --which drift --out results/prefill
 python src/save_edit.py --patch specs/q3.json --out checkpoints/q3
+bash scripts/run_euroeval.sh danish-foundation-models/DFM-Mimir-v1.5 results/euroeval_base   # baseline arm
 bash scripts/run_euroeval.sh "$PWD/checkpoints/q3" results/euroeval_q3
 python src/analyze_euroeval.py results/euroeval_base results/euroeval_q3
 
@@ -319,5 +347,9 @@ Every run directory holds the raw generations (`results/*/<lang>.jsonl`), and ev
 * EuroEval runs through vLLM, whose `hrm_text` implementation ignores the PrefixLM mask. Levels are therefore
   not comparable to the model card (DANSK NER scores ~47 F1 here against ~96 in the report); baseline and
   edited run through the same command, so the *contrast* is what the comparison can support.
-* The unigram counts, the `d_prior` fits and the EuroEval virtualenv are reused from
-  `~/githubs/mimirs-geometry-of-ignorance`, which studied the same model family from the prior-direction angle.
+* `src/langdir.py` reads the English and Danish unigram counts from `results/unigram_pile.npy` and
+  `results/unigram_dynaword.npy` (100M tokens each of the Pile and Danish Dynaword, counted with
+  `src/count_unigrams.py`); those two files are committed so the direction can be refitted without re-streaming
+  the corpora.
+* The EuroEval wrapper expects `.venv-eval` in the repository root (see *Reproduce*); `scripts/run_euroeval.sh`
+  points at it.

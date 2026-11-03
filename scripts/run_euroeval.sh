@@ -7,7 +7,7 @@
 set -euo pipefail
 MODEL="${1:?model}"; OUT="${2:?outdir}"; shift 2
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-EVAL_BIN="$HOME/githubs/mimirs-geometry-of-ignorance/.venv-eval/bin/euroeval"
+EVAL_BIN="$HOME/githubs/mimir-weight-space/.venv-eval/bin/euroeval"
 mkdir -p "$OUT"
 cd "$OUT"
 CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-1}" \

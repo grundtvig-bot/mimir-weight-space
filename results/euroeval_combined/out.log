@@ -1,0 +1,4 @@
+No prebuilt binary for CUDA 12.9, loading CUDA 12.8 instead. Set BNB_CUDA_VERSION to override.
+Started EuroEval run. Run with `--verbose` for more information.
+
+Loading the model /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_q3_acc...
