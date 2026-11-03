@@ -1,0 +1,10 @@
+{
+ "name": "acc_en_a05",
+ "note": "grammaticality direction written into the yes/no rows of the output head (English acceptability)",
+ "direction_fit": "results/accept_probe_scala/u_gold_full.pt, difference of means over all 1,024 scala-en train items at the label position; held-out AUROC 0.914",
+ "alpha": 0.5,
+ "edits": [
+  {"param": "lm_head.weight", "kind": "row_dir", "row": 1904, "direction": "results/accept_probe_scala/u_gold_full.pt:u", "alpha": 0.5},
+  {"param": "lm_head.weight", "kind": "row_dir", "row": 4443, "direction": "results/accept_probe_scala/u_gold_full.pt:u", "alpha": -0.5}
+ ]
+}

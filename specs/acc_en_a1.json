@@ -1,0 +1,11 @@
+{
+ "name": "acc_en_a1",
+ "note": "write the grammaticality direction into the yes/no rows of the output head (English acceptability)",
+ "direction_fit": "results/accept_probe_scala/u_gold.pt (first half of the scala-en train split)",
+ "auroc_heldout": 0.921,
+ "alpha": 1.0,
+ "edits": [
+  {"param": "lm_head.weight", "kind": "row_dir", "row": 1904, "direction": "results/accept_probe_scala/u_gold.pt:u", "alpha": 1.0},
+  {"param": "lm_head.weight", "kind": "row_dir", "row": 4443, "direction": "results/accept_probe_scala/u_gold.pt:u", "alpha": -1.0}
+ ]
+}
