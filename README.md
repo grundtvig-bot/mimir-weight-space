@@ -169,9 +169,10 @@ worth 1 problem in 100 rather than 32 in 100.
 ## 6. EuroEval, Danish + English
 
 EuroEval 18.x, zero-shot on the validation split, 1 iteration, all Danish and English benchmarks, vLLM
-backend, **the same command for both arms** (`scripts/run_euroeval.sh`, 25 datasets completed for each arm;
-`ragtruth-en` was re-run separately for the baseline after that process was killed late in the suite, and
-`contamination-canary` is not a scorable dataset id in this version).
+backend, **the same command for both arms** (`scripts/run_euroeval.sh`). 25 datasets are in the table below;
+`ragtruth-en` was re-run on its own for the baseline after that process was killed late in the suite, and is
+reported separately because its metric is a hallucination *rate* (lower is better): 4.79 → 1.64, i.e. the edited
+model is the better arm there. `contamination-canary` is not a scorable dataset id in this EuroEval version.
 
 | task | n | base | edited | Δ |
 |---|---:|---:|---:|---:|
