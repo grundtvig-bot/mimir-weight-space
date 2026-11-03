@@ -209,7 +209,7 @@ comparable to the model card — DANSK NER scores ~47 F1 here against ~96 in the
 same command, so the contrast is what this comparison can support.
 
 
-## 8. Linguistic acceptability: a weight edit that does help
+## 7. Linguistic acceptability: a weight edit that does help
 
 The drift edit (§5) cost ~3 points on both acceptability benchmarks, so we tried to do better on those two
 specifically — `scala-en` (English, MCC 64.90) and `dala` (Danish, 97.67). This is a second, independent
@@ -251,7 +251,7 @@ effect; the edit also touches tokens that occur in ordinary text, so other bench
 (only these two were measured for this arm); and α was chosen on the test split, which is why the headline is
 the disjoint 170-item subset.
 
-## 9. A save-time config bug worth knowing about
+## 8. A save-time config bug worth knowing about
 
 `save_pretrained` rewrote `num_hidden_layers` from **16** (as published) to **128** — the recurrence's cache
 slot count — and vLLM then ran the model differently: an unedited re-save scored scala-en 60.46 / dala 94.52
@@ -264,7 +264,7 @@ Consequence for §6: that EuroEval arm was produced by a checkpoint saved *befor
 this confound. It is being re-measured (`scripts/rerun_q3_euroeval.sh`, `results/euroeval_q3_fixed`); the
 drift-vs-accuracy conclusions of §5 are unaffected (they never involve a saved checkpoint).
 
-## 7. What would have to be true for a positive result here
+## 9. What would have to be true for a positive result here
 
 The blog's positive Qwen result needed three things at once: a failure mode that *stops the model producing an
 answer it can already compute*, a component whose removal is specific (random control flat), and enough of those
