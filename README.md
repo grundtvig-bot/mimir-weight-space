@@ -170,44 +170,43 @@ worth 1 problem in 100 rather than 32 in 100.
 ## 6. EuroEval, Danish + English
 
 EuroEval 18.x, zero-shot on the validation split, 1 iteration, all Danish and English benchmarks, vLLM
-backend, **the same command for both arms** (`scripts/run_euroeval.sh`). 25 datasets are in the table below;
-`ragtruth-en` was re-run on its own for the baseline after that process was killed late in the suite, and is
-reported separately because its metric is a hallucination *rate* (lower is better): 4.79 → 1.64, i.e. the edited
-model is the better arm there. `contamination-canary` is not a scorable dataset id in this EuroEval version.
+backend, **the same command for both arms** (`scripts/run_euroeval.sh`). The baseline arm is the published
+checkpoint; the edited arm is `checkpoints/q3_fixed`, saved by the current `src/save_edit.py` (see §8 — the
+first version of this table was produced by a checkpoint whose config had `num_hidden_layers: 128` and is
+superseded). 25 datasets completed for both arms; `ragtruth-en` is reported separately because its metric is a
+hallucination *rate* (lower is better): 4.79 → 1.64 on the first arm, and the corrected arm is being folded in.
 
 | task | n | base | edited | Δ |
 |---|---:|---:|---:|---:|
-| european-values | 2 | 41.36 | 29.96 | **−11.40** |
-| linguistic-acceptability | 2 | 81.28 | 78.18 | −3.11 |
-| reading-comprehension | 2 | 52.34 | 50.85 | −1.49 |
-| tool-calling | 2 | 7.67 | 7.48 | −0.19 |
-| hallucination | 1 | 0.76 | 0.64 | −0.12 |
-| translation | 2 | 64.09 | 64.00 | −0.09 |
-| sentiment-classification | 2 | 58.07 | 58.79 | +0.72 |
-| named-entity-recognition | 2 | 53.47 | 54.76 | +1.29 |
-| summarization | 2 | 37.63 | 39.05 | +1.42 |
-| common-sense-reasoning | 2 | 57.97 | 60.02 | +2.05 |
-| knowledge | 3 | 65.77 | 67.78 | +2.01 |
-| logical-reasoning | 2 | 80.66 | 82.81 | +2.15 |
-| word-in-context | 1 | 41.91 | 45.08 | +3.17 |
-| **all** | **25** | **52.36** | **52.03** | **−0.33** (12W / 2T / 11L) |
+| european-values | 2 | 41.36 | 35.56 | **−5.80** |
+| common-sense-reasoning | 2 | 57.97 | 57.03 | −0.94 |
+| named-entity-recognition | 2 | 53.47 | 52.65 | −0.82 |
+| linguistic-acceptability | 2 | 81.28 | 80.83 | −0.46 |
+| logical-reasoning | 2 | 80.66 | 80.21 | −0.46 |
+| translation | 2 | 64.09 | 63.79 | −0.30 |
+| knowledge | 3 | 65.77 | 65.51 | −0.26 |
+| tool-calling | 2 | 7.67 | 7.47 | −0.20 |
+| summarization | 2 | 37.63 | 37.62 | −0.01 |
+| reading-comprehension | 2 | 52.34 | 52.39 | +0.05 |
+| hallucination | 1 | 0.76 | 1.95 | +1.19 |
+| sentiment-classification | 2 | 58.07 | 59.30 | +1.23 |
+| word-in-context | 1 | 41.91 | 41.91 | +0.00 |
+| **all** | **25** | **52.36** | **51.76** | **−0.60** (6W / 5T / 14L) |
 
-**Answer to the question: yes on aggregate, no on one task.** The mean change is −0.33 points with wins ≈
-losses, which is what "did not damage the benchmarks" looks like at 25 datasets. The exception is European
-values in Danish — `valeu-da` 82.5 → 59.7, a 23-point drop that is far outside noise and drives the whole task
-average (`valeu-en` scores 0.17/0.25, i.e. it is not answering that format in either arm). Anything reported
-here should carry that caveat rather than a blanket "no regression".
+**Answer to the question: mostly maintained, but a net loss, not a wash.** The mean change is −0.60 points with
+more losses than wins (6/5/14). Two datasets carry most of it: `valeu-da` 82.5 → 71.0 (−11.6) and `dala`
+97.7 → 96.1 (−1.6); everything else sits inside ±2.5. Nothing here is a free win, and the drift edit is not
+worth shipping on this evidence.
 
-The per-task pattern is the same one the earlier prior-direction work found: tasks where the model has to
-*construct* an answer from the input gain (zebra puzzles +5.1, DANSK NER +4.9, word-in-context +3.2), tasks that
-reward faithful copying lose (SQuAD −4.3, linguistic acceptability −3.1/−3.2). Two independent interventions on
-the same model producing the same trade-off is the most interesting thing in this repository, and neither of them
-is a free win.
+An earlier version of this table (produced before the §8 config bug was found) showed large *gains* on zebra
+puzzles (+5.1) and DANSK NER (+4.9) and a mean of −0.33. Those were artifacts of the broken checkpoint config,
+not effects of the edit. The corrected run removes them: `zebra-puzzles-easy-da` +0.65, `dansk` −0.80. The
+lesson is the general one — an edit is only as trustworthy as the round trip that produced the checkpoint it was
+measured on.
 
 Level caveat: vLLM's `hrm_text` implementation ignores Mimir's PrefixLM mask, so absolute levels are not
 comparable to the model card — DANSK NER scores ~47 F1 here against ~96 in the Mimir report. Both arms ran the
 same command, so the contrast is what this comparison can support.
-
 
 ## 7. Linguistic acceptability: a weight edit that does help
 
@@ -260,9 +259,10 @@ published `config.json`, `tokenizer_config.json`, `tokenizer.json` and `chat_tem
 checkpoint differs from the base model **only** in the edited tensors. Verified by re-running an unedited save
 (64.90 / 97.67, exactly the published numbers).
 
-Consequence for §6: that EuroEval arm was produced by a checkpoint saved *before* this fix, so its levels carry
-this confound. It is being re-measured (`scripts/rerun_q3_euroeval.sh`, `results/euroeval_q3_fixed`); the
-drift-vs-accuracy conclusions of §5 are unaffected (they never involve a saved checkpoint).
+Consequence for §6: that arm was re-measured after the fix (`scripts/rerun_q3_euroeval.sh`, results in
+`results/euroeval_q3_fixed`) and the corrected numbers are what §6 now reports — the pre-fix table had spurious
+gains on zebra puzzles and NER. The drift-vs-accuracy conclusions of §5 are unaffected: they never involve a
+saved checkpoint.
 
 ## 9. What would have to be true for a positive result here
 
