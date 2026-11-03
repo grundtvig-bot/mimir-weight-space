@@ -174,16 +174,17 @@ backend, **the same command for both arms** (`scripts/run_euroeval.sh`). The bas
 checkpoint; the edited arm is `checkpoints/q3_fixed`, saved by the current `src/save_edit.py` (see §8 — the
 first version of this table was produced by a checkpoint whose config had `num_hidden_layers: 128` and is
 superseded). 25 datasets completed for both arms; `ragtruth-en` is reported separately because its metric is a
-hallucination *rate* (lower is better): 4.79 → 1.64 on the first arm, and the corrected arm is being folded in.
+hallucination *rate* (lower is better): **4.79 → 2.44** for this (corrected) arm, so the edited model is the
+better one there.
 
 | task | n | base | edited | Δ |
 |---|---:|---:|---:|---:|
-| european-values | 2 | 41.36 | 35.56 | **−5.80** |
+| european-values | 2 | 41.36 | 35.55 | **−5.80** |
 | common-sense-reasoning | 2 | 57.97 | 57.03 | −0.94 |
 | named-entity-recognition | 2 | 53.47 | 52.65 | −0.82 |
 | linguistic-acceptability | 2 | 81.28 | 80.83 | −0.46 |
 | logical-reasoning | 2 | 80.66 | 80.21 | −0.46 |
-| translation | 2 | 64.09 | 63.79 | −0.30 |
+| translation | 2 | 64.09 | 63.78 | −0.30 |
 | knowledge | 3 | 65.77 | 65.51 | −0.26 |
 | tool-calling | 2 | 7.67 | 7.47 | −0.20 |
 | summarization | 2 | 37.63 | 37.62 | −0.01 |
