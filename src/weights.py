@@ -52,6 +52,12 @@ def apply_edits(model, edits: list[dict]) -> dict:
                 sub = sub - alpha * coef.unsqueeze(0) * d.unsqueeze(1)
                 w[:, sel] = sub
                 changed[param] = n_cols * w.shape[0]
+            elif kind == "row_dir":
+                d = load_direction(e["direction"]).to(w.device)
+                d = d / d.norm()
+                row = int(e["row"])
+                w[row] = w[row] + alpha * d
+                changed[param] = w.shape[1]
             elif kind == "scale":
                 w[:, sel] = w[:, sel] * (1.0 + alpha)
                 changed[param] = n_cols * w.shape[0]

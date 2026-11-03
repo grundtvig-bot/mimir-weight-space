@@ -49,6 +49,21 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(out, safe_serialization=True)
     tok.save_pretrained(out)
+
+    # `save_pretrained` re-derives num_hidden_layers from the recurrence (16 stored layers -> 128 cache
+    # slots), which vLLM then treats as the layer count and which measurably changes results. Copy the
+    # published non-weight files back so a checkpoint differs from the base model only in the edited tensors.
+    from huggingface_hub import snapshot_download
+
+    base_dir = Path(snapshot_download(args.model, allow_patterns=["*.json", "*.jinja"]))
+    for name in ("config.json", "tokenizer_config.json", "tokenizer.json", "chat_template.jinja",
+                 "special_tokens_map.json"):
+        src = base_dir / name
+        if src.exists():
+            (out / name).write_bytes(src.read_bytes())
+    gen = out / "generation_config.json"
+    if gen.exists() and not (base_dir / "generation_config.json").exists():
+        gen.unlink()  # the base model ships none; a default one changes nothing but the diff
     (out / "edit_spec.json").write_text(json.dumps(spec, indent=1))
 
     h = hashlib.sha256()

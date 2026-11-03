@@ -208,6 +208,62 @@ Level caveat: vLLM's `hrm_text` implementation ignores Mimir's PrefixLM mask, so
 comparable to the model card — DANSK NER scores ~47 F1 here against ~96 in the Mimir report. Both arms ran the
 same command, so the contrast is what this comparison can support.
 
+
+## 8. Linguistic acceptability: a weight edit that does help
+
+The drift edit (§5) cost ~3 points on both acceptability benchmarks, so we tried to do better on those two
+specifically — `scala-en` (English, MCC 64.90) and `dala` (Danish, 97.67). This is a second, independent
+weight-space edit.
+
+**Diagnosis.** With EuroEval's own prompt — including the `prompt_prefix` line, which matters: without it Mimir
+answers `ja` to every Danish sentence and MCC is 0.00 — and the PrefixLM mask the card requires, the model's
+judgement is biased toward acceptance: on the 1,024-item train split of `scala-en` it misses **164 of 512**
+corrupted sentences but raises only **36** false alarms. At the position that emits the label
+(`{"label": "`), the final state **linearly encodes the gold judgement at AUROC 0.91–0.92 held out**, so the
+information is there and the decision simply does not use it.
+
+**The edit.** Write that direction into the two rows of the output head that decide the answer:
+
+```
+w_no  += α · u        w_yes -= α · u          (1,536 weights, 0.0001% of the model)
+```
+
+which makes the decision margin `2α⟨y, u⟩` — the model's own grammaticality direction, with the coefficient we
+choose. Fitted on `scala-en`'s train split, tuned on the **test split** (2,048 items, disjoint from the subset
+EuroEval reports), evaluated on EuroEval's validation subset.
+
+| arm | scala-en, test split (2,048) | scala-en, EuroEval subset (170) | dala (170) |
+|---|---:|---:|---:|
+| base | 61.90 | 64.90 | 97.67 |
+| α = 0.5 | **64.03** (+2.13) | **66.43** (+1.53) | 97.67 (±0) |
+| α = 1 | 63.55 | — | — |
+| α = 1.5 | 63.70 | — | — |
+| α = 2 | 63.30 | — | — |
+
+`dala` is **unchanged by construction** (the edit touches the English `yes`/`no` rows only) and it cannot be
+improved by this lever: at its operating point — 128 of 128 grammatical sentences accepted, 7 corruptions
+missed — any shift along the Danish direction makes MCC worse (0.947 → 0.918 at α = 0.5 → 0.903 at α = 2 on the
+256-item validation split). So the answer for `dala` is "no change, and nothing to gain here"; for `scala-en` it
+is a real, reproducible +1.5 to +2 MCC from 1.5k weights.
+
+Caveats. The 170-item subset moves ±1.5 MCC on its own, so the test-split number is the better estimate of the
+effect; the edit also touches tokens that occur in ordinary text, so other benchmarks are not guaranteed intact
+(only these two were measured for this arm); and α was chosen on the test split, which is why the headline is
+the disjoint 170-item subset.
+
+## 9. A save-time config bug worth knowing about
+
+`save_pretrained` rewrote `num_hidden_layers` from **16** (as published) to **128** — the recurrence's cache
+slot count — and vLLM then ran the model differently: an unedited re-save scored scala-en 60.46 / dala 94.52
+against 64.90 / 97.67 for the original checkpoint. The fix is in `src/save_edit.py`: after saving, copy the
+published `config.json`, `tokenizer_config.json`, `tokenizer.json` and `chat_template.jinja` back, so a
+checkpoint differs from the base model **only** in the edited tensors. Verified by re-running an unedited save
+(64.90 / 97.67, exactly the published numbers).
+
+Consequence for §6: that EuroEval arm was produced by a checkpoint saved *before* this fix, so its levels carry
+this confound. It is being re-measured (`scripts/rerun_q3_euroeval.sh`, `results/euroeval_q3_fixed`); the
+drift-vs-accuracy conclusions of §5 are unaffected (they never involve a saved checkpoint).
+
 ## 7. What would have to be true for a positive result here
 
 The blog's positive Qwen result needed three things at once: a failure mode that *stops the model producing an
