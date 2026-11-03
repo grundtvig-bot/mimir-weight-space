@@ -291,6 +291,14 @@ python src/prefill_test.py --lang dan --variant 0 --which drift --out results/pr
 python src/save_edit.py --patch specs/q3.json --out checkpoints/q3
 bash scripts/run_euroeval.sh "$PWD/checkpoints/q3" results/euroeval_q3
 python src/analyze_euroeval.py results/euroeval_base results/euroeval_q3
+
+# §7 acceptability: locate the grammaticality direction, then write it into the yes/no head rows
+python src/accept.py    --dataset scala-en --split val --prefix-lm --out results/accept_plm   # baseline check
+python src/accept_probe.py --dataset scala-en --split train --out results/accept_probe_scala  # states + u
+python src/bias_sweep.py --dataset scala-en --probe results/accept_probe_scala --alphas 0,0.5,1,2   # offline
+bash scripts/sweep_alpha.sh 0.5 1 2          # the same sweep through EuroEval on the test split
+.venv/bin/python src/save_edit.py --patch specs/acc_en_a05.json --out checkpoints/acc_en_a05
+bash scripts/save_and_verify.sh              # save + confirm the checkpoint reproduces the patched run
 ```
 
 Every run directory holds the raw generations (`results/*/<lang>.jsonl`), and every edit is a JSON spec in
