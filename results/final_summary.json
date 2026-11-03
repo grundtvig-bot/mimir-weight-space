@@ -1,0 +1,66 @@
+{
+ "dan": {
+  "n": 100,
+  "base": {
+   "n": 100,
+   "acc": 0.9,
+   "drift": 0.25,
+   "acc_stay": 0.8933333333333333,
+   "n_drift": 25,
+   "acc_drift": 0.92,
+   "direct": 0.02,
+   "trunc": 0.0,
+   "toks": 211.74
+  },
+  "edited": {
+   "n": 100,
+   "acc": 0.88,
+   "drift": 0.14,
+   "acc_stay": 0.9069767441860465,
+   "n_drift": 14,
+   "acc_drift": 0.7142857142857143,
+   "direct": 0.01,
+   "trunc": 0.0,
+   "toks": 224.11
+  },
+  "delta_acc": -0.020000000000000018,
+  "wins": 2,
+  "losses": 4,
+  "mcnemar_p": 0.6875,
+  "delta_drift": -0.10999999999999999,
+  "rescued_drift_cases": 13,
+  "new_drift_cases": 2
+ },
+ "eng": {
+  "n": 100,
+  "base": {
+   "n": 100,
+   "acc": 0.96,
+   "drift": 0.0,
+   "acc_stay": 0.96,
+   "n_drift": 0,
+   "acc_drift": null,
+   "direct": 0.0,
+   "trunc": 0.0,
+   "toks": 256.04
+  },
+  "edited": {
+   "n": 100,
+   "acc": 0.94,
+   "drift": 0.0,
+   "acc_stay": 0.94,
+   "n_drift": 0,
+   "acc_drift": null,
+   "direct": 0.0,
+   "trunc": 0.02,
+   "toks": 265.62
+  },
+  "delta_acc": -0.020000000000000018,
+  "wins": 1,
+  "losses": 3,
+  "mcnemar_p": 0.625,
+  "delta_drift": 0.0,
+  "rescued_drift_cases": 0,
+  "new_drift_cases": 0
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "name": "e3",
+ "note": "language direction u (mean English - mean Danish final state)",
+ "lang": "dan",
+ "auroc_heldout": 0.9706287384033203,
+ "random_direction": false,
+ "random_columns": false,
+ "k": 8,
+ "alpha": 1.0,
+ "edits": [
+  {
+   "param": "model.H_module.layers.15.mlp.down_proj.weight",
+   "kind": "project_out",
+   "columns": [
+    2040,
+    2974,
+    188,
+    428,
+    2743,
+    1110,
+    2393,
+    3444
+   ],
+   "direction": "results/langdir/u.pt:u",
+   "alpha": 1.0
+  }
+ ]
+}

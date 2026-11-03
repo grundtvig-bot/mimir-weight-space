@@ -1,0 +1,25 @@
+[project]
+name = "mimir-weight-space"
+version = "0.1.0"
+description = "The direction of ignorance (Liu et al. 2026) in DFM Mimir, probed on multilingual GSM-symbolic"
+requires-python = ">=3.12"
+dependencies = [
+    "torch==2.13.0",
+    "transformers==5.19.0",
+    "datasets>=4.0",
+    "multilingual-gsm-symbolic",
+    "numpy>=2.0",
+    "matplotlib>=3.9",
+    "zstandard",
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "pytorch-cu129"
+url = "https://download.pytorch.org/whl/cu129"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu129" }

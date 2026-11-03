@@ -1,0 +1,60 @@
+{
+ "name": "e4",
+ "note": "control: random unit direction with the same norm as u",
+ "lang": "dan",
+ "auroc_heldout": 0.9706287384033203,
+ "random_direction": true,
+ "random_columns": false,
+ "k": 8,
+ "alpha": 1.0,
+ "edits": [
+  {
+   "param": "model.H_module.layers.15.mlp.down_proj.weight",
+   "kind": "project_out",
+   "columns": [
+    2040,
+    2974,
+    188,
+    428,
+    2743,
+    1110,
+    2393,
+    3444
+   ],
+   "direction": "results/langdir/u_random.pt:u",
+   "alpha": 1.0
+  },
+  {
+   "param": "model.H_module.layers.10.mlp.down_proj.weight",
+   "kind": "project_out",
+   "columns": [
+    3218,
+    3626,
+    874,
+    3421,
+    3339,
+    2653,
+    19,
+    2516
+   ],
+   "direction": "results/langdir/u_random.pt:u",
+   "alpha": 1.0
+  },
+  {
+   "param": "model.H_module.layers.12.mlp.down_proj.weight",
+   "kind": "project_out",
+   "columns": [
+    3152,
+    3031,
+    3343,
+    670,
+    1092,
+    1509,
+    2643,
+    2904
+   ],
+   "direction": "results/langdir/u_random.pt:u",
+   "alpha": 1.0
+  }
+ ]
+}

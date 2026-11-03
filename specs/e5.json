@@ -1,0 +1,52 @@
+{
+ "name": "e5",
+ "note": "language direction u (mean English - mean Danish final state)",
+ "lang": "dan",
+ "auroc_heldout": 0.9706287384033203,
+ "random_direction": false,
+ "random_columns": false,
+ "k": 32,
+ "alpha": 1.0,
+ "edits": [
+  {
+   "param": "model.H_module.layers.15.mlp.down_proj.weight",
+   "kind": "project_out",
+   "columns": [
+    2040,
+    2974,
+    188,
+    428,
+    2743,
+    1110,
+    2393,
+    3444,
+    970,
+    1576,
+    1872,
+    1876,
+    2350,
+    3291,
+    269,
+    2715,
+    537,
+    3134,
+    1651,
+    3858,
+    2085,
+    1768,
+    1364,
+    3991,
+    2034,
+    2664,
+    1120,
+    1675,
+    1827,
+    1358,
+    71,
+    1332
+   ],
+   "direction": "results/langdir/u.pt:u",
+   "alpha": 1.0
+  }
+ ]
+}
