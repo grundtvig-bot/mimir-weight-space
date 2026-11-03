@@ -157,10 +157,11 @@ Two independent checks agree:
 * **Prefill control** — re-generate the 24 drifting Danish problems with the response prefilled with `"Trin 1:"`.
   Accuracy 0.708 → 0.792 (3 wins / 1 loss), and 17% still drift even with a Danish start. Forcing the language
   recovers a little, nowhere near the 0.91 that answers which never drifted achieve.
-* **The failure taxonomy** — of the 14 Danish errors, 8 are the model modelling a different problem, 3 do one
-  operation too many at the end (the right number appears in the chain of thought and the box disagrees), 2 are
-  direct answers, 1 is a repetition loop. Only the last three classes are "obstacles" of the blog's kind, and
-  they account for 3 of 100 problems.
+* **The failure taxonomy** (`src/diagnose.py`) — of the 14 Danish errors, 5 have the right number already in the
+  response and a different one in the box (3 of those are "one operation too many" at the end), 5 are a
+  self-consistent chain of thought for the wrong problem, 2 are direct answers with no chain of thought, 1 is a
+  repetition loop and 1 is a wrong arithmetic step. Only the direct-answer and loop classes are "obstacles" of
+  the blog's kind, and they are 3 problems in 100.
 
 One genuine rescue: template 336 — the baseline emitted `\boxed{5832}` after 9 tokens (gold 1053), the edited
 model reasons in Danish and answers 1053. That is exactly Astra's "let the model finish" failure, and it is now
@@ -213,9 +214,10 @@ The blog's positive Qwen result needed three things at once: a failure mode that
 answer it can already compute*, a component whose removal is specific (random control flat), and enough of those
 failures to measure. In Mimir v1.5 on GSM-Symbolic the third condition is gone: at 86–96% accuracy the
 remaining errors are comprehension, which is a capability, not an obstacle. The same machinery pointed at a task
-where v1.5 *does* have a systematic obstacle would be the natural next step — the model card's own weak spots
-(Danish word-in-context, translation, tool calling) are candidates, and the harness here transfers to any of
-them unchanged.
+where v1.5 *does* have a systematic obstacle would be the natural next step, and the EuroEval table points at
+one: **tool calling** scores 4.8 / 10.6 in both arms, i.e. the model is not producing the required format at all.
+That is a format obstacle, not a comprehension gap, and the harness here transfers to it unchanged — as does the
+one-forward-pass probe (probability of opening the required call syntax at the answer onset).
 
 ## Reproduce
 
