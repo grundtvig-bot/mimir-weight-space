@@ -35,10 +35,12 @@ with a EuroEval (Danish + English) check that the edit does not cost benchmark p
 | **base** | – | 0.900 / 0.960 | 64.90 | 97.67 | 52.36 |
 | **q3** (drift) | 1.57M H-module MLP weights | 0.880 / 0.940 | 65.58 | 96.08 | 51.76 (−0.60) |
 | **acc_en_a05** (acceptability) | 1,536 output-head weights | – | **66.43** | 97.67 | not run |
-| **combined** (both) | 1.58M weights, 0.088% | PENDING | PENDING | PENDING | PENDING |
+| **both**, acceptability direction fitted on the *base* model | 1.58M weights, 0.088% | **0.940** / 0.960 | 64.70 | 96.08 | 51.71 (−0.65) |
+| **both**, acceptability direction **refitted** on the drift-edited model | 1.58M weights, 0.088% | – | **66.78** | 96.08 | see §10 |
 
-The short version: the drift edit (§3–§6) moves a behaviour and does not pay for itself; the acceptability edit (§7)
-is a genuine +1.5 MCC for a thousandth of a percent of the weights; and `dala` cannot be improved by either.
+The short version: the drift edit moves a behaviour and does not pay for itself; the acceptability edit is a
+genuine +1.5–1.9 MCC for a thousandth of a percent of the weights; `dala` cannot be improved by either; and the
+two edits interact — the acceptability direction has to be refitted after the drift edit or its gain disappears.
 
 ## What's in here
 
@@ -290,6 +292,32 @@ Consequence for §6: that arm was re-measured after the fix (`scripts/rerun_q3_e
 `results/euroeval_q3_fixed`) and the corrected numbers are what §6 now reports — the pre-fix table had spurious
 gains on zebra puzzles and NER. The drift-vs-accuracy conclusions of §5 are unaffected: they never involve a
 saved checkpoint.
+
+## 10. Both edits at once, and why the order of measurement matters
+
+`specs/combined_q3_acc.json` applies the drift edit (16 tensor edits, 1.57M weights) and the acceptability edit
+(2 head rows, 1,536 weights) together — 1,575,936 weights, 0.0882% of the model. Run on everything:
+
+* **GSM-Symbolic, held out** (100 problems per language): Danish **0.900 → 0.940** (5 wins / 1 loss,
+  p = 0.22), English 0.960 → 0.960 (3/3, p = 1.0), Danish drift 25% → 16%. The Danish gain is *suggestive, not
+  established* at n = 100, and it is bigger than either arm alone (drift edit 0.880, acceptability edit
+  untested on GSM) — which is a reason to replicate it, not to believe it yet.
+* **EuroEval, 25 datasets**: mean −0.65 (5W/5T/15L), i.e. the same mild loss as the drift edit alone — and
+  **scala-en fell to 64.70**, below both the base model (64.90) and the drift edit alone (65.58). The
+  acceptability edit had stopped working.
+
+**Why.** The grammaticality direction `u` was fitted on the *base* model's final states. The drift edit changes
+those states (it rewrites 64 columns of every H-layer's MLP), so a direction that separates grammatical from
+ungrammatical tokens in the old representation no longer points at the same thing. Refitting `u` on the
+drift-edited model's own states — same method, same 1,024 train items — restores it and reads *better* than
+before: **AUROC 0.915 held out**, and on the scala-en test split 61.63 (drift edit alone) → **63.51** at α = 0.5.
+
+The refitted checkpoint (`specs/combined_q3_acc_refit.json`, `checkpoints/combined_v2`) scores **66.78** on
+scala-en and **96.08** on dala — the acceptability gain is back (and 0.35 above the standalone edit), while the
+drift edit's dala cost remains.
+
+The general lesson is the one the literature on steering keeps repeating: a direction is a property of *a*
+representation, not of the model. Read it, edit, then read it again.
 
 ## 9. What would have to be true for a positive result here
 

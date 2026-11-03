@@ -1,0 +1,26 @@
+No prebuilt binary for CUDA 12.9, loading CUDA 12.8 instead. Set BNB_CUDA_VERSION to override.
+Started EuroEval run. Run with `--verbose` for more information.
+
+Loading the model /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_v2...
+The number of parameters could not be determined for the model /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_v2, neither from the safetensors metadata nor from the model configuration.
+    ↳ The model /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_v2 has an unknown number of parameters, a vocabulary size of 262,144, and a maximum context length of 4,096.
+
+[2026-11-03 21:39:11]
+Zero-shot benchmarking /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_v2 on the validation split of the English linguistic acceptability dataset ScaLA-en (1/2 benchmarks)...
+Rendering prompts:   0%|[33m——————————[0m| 0/170 [00:00<?, ?it/s]Rendering prompts:  38%|[33m▰▰▰———————[0m| 64/170 [00:00<00:00, 637.13it/s]                                                                    Processed prompts:   0%|[33m——————————[0m| 0/170 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   1%|[33m——————————[0m| 1/170 [00:04<11:28,  4.07s/it, est. speed input: 13.50 toks/s, output: 1.72 toks/s]Processed prompts:   1%|[33m——————————[0m| 2/170 [00:04<04:56,  1.77s/it, est. speed input: 37.17 toks/s, output: 3.31 toks/s]Processed prompts:   2%|[33m——————————[0m| 3/170 [00:04<02:51,  1.03s/it, est. speed input: 49.11 toks/s, output: 5.25 toks/s]Processed prompts:   5%|[33m——————————[0m| 9/170 [00:04<00:36,  4.35it/s, est. speed input: 135.99 toks/s, output: 14.79 toks/s]Processed prompts:  18%|[33m▰—————————[0m| 30/170 [00:04<00:07, 19.35it/s, est. speed input: 472.36 toks/s, output: 53.03 toks/s]Processed prompts:  49%|[33m▰▰▰▰——————[0m| 83/170 [00:04<00:01, 65.95it/s, est. speed input: 1287.77 toks/s, output: 149.12 toks/s]Processed prompts: 100%|[33m▰▰▰▰▰▰▰▰▰▰[0m| 170/170 [00:04<00:00, 65.95it/s, est. speed input: 2520.39 toks/s, output: 307.69 toks/s]                                                                                                                             Finished benchmarking /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_v2 on the English linguistic acceptability dataset ScaLA-en.
+- Matthew's Correlation Coefficient: 66.78%
+- Macro-average F1-score: 82.80%
+
+[2026-11-03 21:39:23]
+Zero-shot benchmarking /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_v2 on the validation split of the Danish linguistic acceptability dataset DaLA (2/2 benchmarks)...
+Rendering prompts:   0%|[33m——————————[0m| 0/170 [00:00<?, ?it/s]Rendering prompts:  53%|[33m▰▰▰▰▰—————[0m| 90/170 [00:00<00:00, 892.89it/s]                                                                    Processed prompts:   0%|[33m——————————[0m| 0/170 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   1%|[33m——————————[0m| 1/170 [00:03<08:41,  3.09s/it, est. speed input: 27.54 toks/s, output: 2.27 toks/s]Processed prompts:   3%|[33m——————————[0m| 5/170 [00:03<01:21,  2.02it/s, est. speed input: 141.86 toks/s, output: 11.05 toks/s]Processed prompts:   4%|[33m——————————[0m| 7/170 [00:03<00:55,  2.93it/s, est. speed input: 180.96 toks/s, output: 14.86 toks/s]Processed prompts:  25%|[33m▰▰————————[0m| 43/170 [00:03<00:04, 28.21it/s, est. speed input: 1028.15 toks/s, output: 85.05 toks/s]Processed prompts:  51%|[33m▰▰▰▰▰—————[0m| 87/170 [00:03<00:01, 64.56it/s, est. speed input: 1990.88 toks/s, output: 168.86 toks/s]Processed prompts:  95%|[33m▰▰▰▰▰▰▰▰▰—[0m| 161/170 [00:03<00:00, 125.66it/s, est. speed input: 3567.20 toks/s, output: 299.10 toks/s]Processed prompts: 100%|[33m▰▰▰▰▰▰▰▰▰▰[0m| 170/170 [00:03<00:00, 125.66it/s, est. speed input: 3767.22 toks/s, output: 317.47 toks/s]                                                                                                                              Finished benchmarking /home/kenneth/githubs/mimir-weight-space/checkpoints/combined_v2 on the Danish linguistic acceptability dataset DaLA.
+- Matthew's Correlation Coefficient: 96.08%
+- Macro-average F1-score: 98.04%
+
+Completed 2 benchmarks
+Exception ignored in: <function ResourceTracker.__del__ at 0x7cecee98b6a0>
+Traceback (most recent call last):
+  File "/home/kenneth/githubs/mimirs-geometry-of-ignorance/.venv-eval/lib/python3.12/site-packages/multiprocess/resource_tracker.py", line 80, in __del__
+  File "/home/kenneth/githubs/mimirs-geometry-of-ignorance/.venv-eval/lib/python3.12/site-packages/multiprocess/resource_tracker.py", line 89, in _stop
+  File "/home/kenneth/githubs/mimirs-geometry-of-ignorance/.venv-eval/lib/python3.12/site-packages/multiprocess/resource_tracker.py", line 102, in _stop_locked
+AttributeError: '_thread.RLock' object has no attribute '_recursion_count'

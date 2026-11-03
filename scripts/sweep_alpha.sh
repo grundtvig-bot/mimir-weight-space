@@ -11,7 +11,7 @@ for a in "$@"; do
       PYTHONPATH="$HOME/githubs/mimir-weight-space/src/patch_accept" \
       MIMIR_ACC_ALPHA="$a" \
       MIMIR_ACC_DIR="$HOME/githubs/mimir-weight-space/results/accept_probe_scala/${DIR:-u_gold}.pt" \
-      "$EVAL" -m danish-foundation-models/DFM-Mimir-v1.5 --dataset scala-en --evaluate-test-split \
+      "$EVAL" -m "${MODEL:-danish-foundation-models/DFM-Mimir-v1.5}" --dataset scala-en --evaluate-test-split \
         --num-iterations 1 --zero-shot --generative-type instruction_tuned --device cuda \
         --no-progress-bar --force --cache-dir "$HOME/githubs/mimir-weight-space/.euroeval_cache" \
         > out.log 2>&1 )

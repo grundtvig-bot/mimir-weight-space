@@ -59,6 +59,7 @@ def probe(tok, model, rec, prompts, lang, device, batch_size=8):
 
 def main() -> None:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default=MODEL)
     ap.add_argument("--dataset", default="scala-en")
     ap.add_argument("--lang", default=None)
     ap.add_argument("--device", default="cuda:0")
@@ -70,8 +71,8 @@ def main() -> None:
     lang = args.lang or ("en" if args.dataset.endswith("-en") else "da")
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    tok = AutoTokenizer.from_pretrained(MODEL)
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float16).to(args.device).eval()
+    tok = AutoTokenizer.from_pretrained(args.model)
+    model = AutoModelForCausalLM.from_pretrained(args.model, dtype=torch.float16).to(args.device).eval()
     model.requires_grad_(False)
     items = load_items(args.dataset, args.split, args.limit)
     prompts = [
